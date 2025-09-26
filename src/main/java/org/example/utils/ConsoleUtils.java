@@ -8,7 +8,7 @@ public class ConsoleUtils {
     private static final Scanner sc = new Scanner(System.in);
 
 
-    private static String readString(String prompt){
+    public static String readString(String prompt){
 
         String input ;
         while(true){
@@ -26,7 +26,7 @@ public class ConsoleUtils {
     }
 
 
-    private static int readInt(String prompt , int min, int max){
+    public static int readInt(String prompt , int min, int max){
         int value;
         while(true){
 
@@ -35,7 +35,7 @@ public class ConsoleUtils {
          try{
              value = Integer.parseInt(input);
              if (value >= min && value<= max) break;
-             else System.out.println("enter a number between " + min + "and" + max+);
+             else System.out.println("enter a number between " + min + "and" + max);
          }catch (NumberFormatException e) {
              System.out.println("Invalid number.Try again");
          }

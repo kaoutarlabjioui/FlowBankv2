@@ -1,4 +1,4 @@
 package org.example.repository.implementation;
 
-public class InMemoryRoleRepository {
+public class CreditRepositoryImp {
 }

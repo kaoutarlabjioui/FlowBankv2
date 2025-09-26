@@ -1,4 +1,4 @@
 package org.example.repository.implementation;
 
-public class InMemoryAccountRepository {
+public class FeeRuleRepositoryImp {
 }

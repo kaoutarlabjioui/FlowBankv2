@@ -10,19 +10,19 @@ public class User {
     private String nom;
     private String prenom;
     private String email;
-    private String passwordHash;
+    private String password;
     private LocalDateTime createdAt;
     private Role role;
 
-    public User(UUID id, String username, String nom, String prenom, String email,
-                String passwordHash, LocalDateTime createdAt, Role role) {
-        this.id = id;
+    public User( String username, String nom, String prenom, String email,
+                String password,  Role role) {
+
         this.username = username;
         this.nom = nom;
         this.prenom = prenom;
         this.email = email;
-        this.passwordHash = passwordHash;
-        this.createdAt = createdAt;
+        this.password = password;
+
         this.role = role;
     }
 
@@ -42,8 +42,8 @@ public class User {
     public String getEmail() {
         return email;
     }
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword() {
+        return password;
     }
     public LocalDateTime getCreatedAt() {
         return createdAt;
@@ -66,4 +66,8 @@ public class User {
                 '}';
     }
 
+    public void setId(UUID id) {
+
+        this.id = id;
+    }
 }
