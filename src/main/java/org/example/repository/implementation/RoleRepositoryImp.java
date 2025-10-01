@@ -21,7 +21,7 @@ public class RoleRepositoryImp implements RoleRepository {
 
       List<Role> roles = new ArrayList<>();
 
-      String query = "SELECT * FROM role";
+      String query = "SELECT * FROM roles WHERE role_name <> 'ADMIN'";
 
       try(Statement stmt = connection.createStatement()){
           ResultSet resultSet = stmt.executeQuery(query);

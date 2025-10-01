@@ -30,7 +30,7 @@ import java.util.UUID;
                 user.setId(UUID.randomUUID());
             }
 
-            String query = "INSERT INTO user (id, username, nom, prenom, email, password, role_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO users (id, username, nom, prenom, email, password, role_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
             PreparedStatement stmt = connection.prepareStatement(query);
 
@@ -46,6 +46,7 @@ import java.util.UUID;
         } catch (SQLException e) {
 
             System.out.println("Error saving user :" + e.getMessage());
+            e.printStackTrace();
 
             return false;
         }
@@ -53,7 +54,7 @@ import java.util.UUID;
 
     public User findByEmail(String email) {
         try {
-            String query = "SELECT * FROM user WHERE email = ?";
+            String query = "SELECT * FROM users WHERE email = ?";
 
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setString(1, email);
@@ -84,7 +85,7 @@ import java.util.UUID;
 
     public User findByUsername(String username) {
         try {
-            String query = "SELECT * FROM user WHERE username = ?";
+            String query = "SELECT * FROM users WHERE username = ?";
             PreparedStatement stmt = connection.prepareStatement(query);
 
             stmt.setString(1, username);
@@ -111,6 +112,41 @@ import java.util.UUID;
 
         return null;
     }
+
+
+        public User findById(UUID id) {
+            try {
+                String sql = "SELECT * FROM users WHERE id = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setObject(1, id);
+                ResultSet rs = stmt.executeQuery();
+
+                if (rs.next()) {
+                    int roleId = rs.getInt("role_id");
+                    Role role = roleRepository.findById(roleId);
+                    return new User(
+                            rs.getString("username"),
+                            rs.getString("nom"),
+                            rs.getString("prenom"),
+                            rs.getString("email"),
+                            rs.getString("password"),
+                            role
+                    );
+                }
+            } catch (Exception e) {
+                System.err.println("Error finding teller: " + e.getMessage());
+            }
+            return null;
+        }
+
+
+
+
+
+
+
+
+
 }
 
 

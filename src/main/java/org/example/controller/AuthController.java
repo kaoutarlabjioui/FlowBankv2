@@ -14,7 +14,7 @@ public class AuthController {
 
     private AuthService authService;
     private RoleRepository roleRepository;
-
+    private User currentUser;
 
     public AuthController(AuthService authService , RoleRepository roleRepository ){
         this.authService = authService;
@@ -79,18 +79,32 @@ public class AuthController {
 
     }
 
-    public void login(){
-       String username = ConsoleUtils.readString("Enter your username : ");
-       String password = ConsoleUtils.readString("Enter your password : ");
+    public User login() {
+        String username = ConsoleUtils.readString("Enter your username : ");
+        String password = ConsoleUtils.readString("Enter your password : ");
 
-       User user = authService.login(username,password);
+        User user = authService.login(username, password);
 
-       if(user != null){
-           System.out.println("login successful welcome " + user.getRole().getRoleName() + user.getPrenom() + user.getNom() );
-       }else {
-           System.out.println("Invalide username or password ");
-       }
+        if (user != null) {
+            this.currentUser = user;
+            System.out.println(" Login successful! Welcome "
+                    + user.getRole().getRoleName() + " "
+                    + user.getPrenom() + " "
+                    + user.getNom());
+        } else {
+            System.out.println(" Invalid username or password!");
+        }
 
+        return user;
+    }
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+
+    public void logout() {
+        this.currentUser = null;
+        System.out.println("👋 You have been logged out.");
     }
 
 

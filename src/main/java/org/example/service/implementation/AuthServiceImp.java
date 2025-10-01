@@ -8,9 +8,10 @@ import org.mindrot.jbcrypt.BCrypt;
 
 
 
-public class InMemoryAuthService implements AuthService {
+public class AuthServiceImp implements AuthService {
     private UserRepository userRepository;
-    public InMemoryAuthService(UserRepository userRepository){
+
+    public AuthServiceImp(UserRepository userRepository){
         this.userRepository = userRepository;
     }
     @Override
@@ -29,6 +30,7 @@ public class InMemoryAuthService implements AuthService {
     public User login(String username,String password) {
         User user = userRepository.findByUsername(username);
         if(user != null && BCrypt.checkpw(password, user.getPassword())){
+
             return user;
         }
 
@@ -36,4 +38,7 @@ public class InMemoryAuthService implements AuthService {
 
 
     }
+
+
 }
+
