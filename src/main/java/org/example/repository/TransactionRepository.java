@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public interface TransactionRepository {
     Transaction save(Transaction transaction);
+    Transaction saveWithAccountUpdate(Transaction transaction);
+    void applyTransactionBalances(Transaction transaction);
     Optional<Transaction> findById(UUID id);
     List<Transaction> findByAccountId(UUID accountId);
     List<Transaction> findAll();

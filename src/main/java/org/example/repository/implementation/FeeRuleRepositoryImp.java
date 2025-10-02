@@ -31,7 +31,7 @@ public class FeeRuleRepositoryImp implements FeeRuleRepository {
         try{
             PreparedStatement stmt = connection.prepareStatement(query);
             stmt.setObject(1, feeRule.getId());
-            stmt.setString(2, feeRule.getOperationType().name());
+            stmt.setString(2, feeRule.getOperationType().name().toLowerCase());
             stmt.setString(3, feeRule.getMode().name());
             stmt.setBigDecimal(4, feeRule.getValue());
             stmt.setString(5, feeRule.getCurrency().name());
@@ -67,7 +67,7 @@ public class FeeRuleRepositoryImp implements FeeRuleRepository {
 
     public List<FeeRule> findAll() {
         List<FeeRule> list = new ArrayList<>();
-        String query = "SELECT * FROM fee_rule";
+        String query = "SELECT * FROM fee_rules";
         try {
             PreparedStatement stmt = connection.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
@@ -82,10 +82,8 @@ public class FeeRuleRepositoryImp implements FeeRuleRepository {
     }
 
 
-
-
     public void update(FeeRule feeRule) {
-        String query = "UPDATE fee_rule SET operation_type = ?::transaction_type, mode = ?::fee_mode, " +
+        String query = "UPDATE fee_rules SET operation_type = ?::transaction_type, mode = ?::fee_mode, " +
                 "value = ?, currency = ?::currency, is_active = ? WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, feeRule.getOperationType().name());
@@ -102,7 +100,7 @@ public class FeeRuleRepositoryImp implements FeeRuleRepository {
     }
 
    public void deactivate(UUID id) {
-        String query = "UPDATE fee_rule SET is_active = false WHERE id = ?";
+        String query = "UPDATE fee_rules SET is_active = false WHERE id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setObject(1, id);
             stmt.executeUpdate();
@@ -115,7 +113,7 @@ public class FeeRuleRepositoryImp implements FeeRuleRepository {
     private FeeRule mapResultSet(ResultSet rs) throws SQLException {
         FeeRule feeRule = new FeeRule();
         feeRule.setId((UUID) rs.getObject("id"));
-        feeRule.setOperationType(TransactionType.valueOf(rs.getString("operation_type")));
+        feeRule.setOperationType(TransactionType.valueOf(rs.getString("operation_type").toUpperCase()));
         feeRule.setMode(FeeMode.valueOf(rs.getString("mode")));
         feeRule.setValue(rs.getBigDecimal("value"));
         feeRule.setCurrency(Currency.valueOf(rs.getString("currency")));

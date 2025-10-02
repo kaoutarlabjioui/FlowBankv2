@@ -47,5 +47,18 @@ public class FeeRule {
         public void setActive(boolean active) { isActive = active; }
         public LocalDateTime getCreatedAt() { return createdAt; }
         public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+
+    @Override
+    public String toString() {
+        return "FeeRule{" +
+                ", operationType=" + operationType +
+                ", mode=" + mode +
+                ", value=" + value +
+                ", currency=" + currency +
+                ", isActive=" + isActive +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }
 

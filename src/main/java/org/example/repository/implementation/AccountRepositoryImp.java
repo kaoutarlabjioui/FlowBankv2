@@ -149,7 +149,7 @@ public class AccountRepositoryImp implements AccountRepository {
 
     public void update(Account account) {
         String sql = """
-            UPDATE account
+            UPDATE accounts
             SET type = ?::account_type, balance = ?, devise = ?::currency,
                 status = ?::account_status, date_cloture = ?, client_id = ?
             WHERE id = ?

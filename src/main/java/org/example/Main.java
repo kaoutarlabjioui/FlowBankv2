@@ -1,9 +1,7 @@
 package org.example;
 
 import org.example.config.AppConfig;
-import org.example.controller.AccountController;
-import org.example.controller.AuthController;
-import org.example.controller.ClientController;
+import org.example.controller.*;
 import org.example.entities.User;
 
 public class Main {
@@ -16,7 +14,7 @@ public class Main {
         System.out.println("=================================================");
 
 
-        Menu menu = new Menu(authController, null,null);
+        Menu menu = new Menu(authController, null,null,null,null);
         boolean running = true;
 
         while (running) {
@@ -31,14 +29,20 @@ public class Main {
 
                 switch (role.toUpperCase()) {
                     case "TELLER" -> {
-                        ClientController tellerController =
-                                AppConfig.createClientController(currentUser);
+                        ClientController tellerController = AppConfig.createClientController(currentUser);
                         AccountController accountController = AppConfig.createAccountController();
-                        menu = new Menu(authController, tellerController,accountController);
+                        TransactionController transactionController = AppConfig.createTransactionController();
+                        FeeRuleController feeRuleController = AppConfig.createFeeRuleController();
+                        menu = new Menu(authController, tellerController,accountController,transactionController,feeRuleController);
                         running = menu.tellerMenu();
                     }
 
                     case "ADMIN" -> {
+                        ClientController adminController = AppConfig.createClientController(currentUser);
+                        AccountController accountController = AppConfig.createAccountController();
+                        TransactionController transactionController = AppConfig.createTransactionController();
+                        FeeRuleController feeRuleController = AppConfig.createFeeRuleController();
+                        menu = new Menu(authController,adminController,accountController,transactionController,feeRuleController);
                         running = menu.adminMenu();
                     }
                     case "AUDITOR" -> {

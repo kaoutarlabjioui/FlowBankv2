@@ -1,23 +1,11 @@
 package org.example.config;
 
-import org.example.controller.AccountController;
-import org.example.controller.AuthController;
-import org.example.controller.ClientController;
+import org.example.controller.*;
 import org.example.entities.User;
-import org.example.repository.AccountRepository;
-import org.example.repository.ClientRepository;
-import org.example.repository.RoleRepository;
-import org.example.repository.UserRepository;
-import org.example.repository.implementation.AccountRepositoryImp;
-import org.example.repository.implementation.ClientRepositoryImp;
-import org.example.repository.implementation.RoleRepositoryImp;
-import org.example.repository.implementation.UserRepositoryImp;
-import org.example.service.AccountService;
-import org.example.service.AuthService;
-import org.example.service.ClientService;
-import org.example.service.implementation.AccountServiceImp;
-import org.example.service.implementation.AuthServiceImp;
-import org.example.service.implementation.ClientServiceImp;
+import org.example.repository.*;
+import org.example.repository.implementation.*;
+import org.example.service.*;
+import org.example.service.implementation.*;
 
 public class AppConfig {
 
@@ -55,6 +43,30 @@ public class AppConfig {
 
             return new AccountController(accountservice,clientService);
         }
+
+
+    public static TransactionController createTransactionController() {
+        AccountRepository accountRepository = new AccountRepositoryImp();
+        AccountService accountService = new AccountServiceImp(accountRepository);
+        RoleRepository roleRepository = new RoleRepositoryImp();
+        UserRepository userRepository = new UserRepositoryImp(roleRepository);
+        ClientRepository clientRepository = new ClientRepositoryImp(userRepository);
+        ClientService clientService = new ClientServiceImp(clientRepository);
+        FeeRuleRepository feeRuleRepository = new FeeRuleRepositoryImp();
+        FeeRuleService feeRuleService = new FeeRuleServiceImp(feeRuleRepository);
+        TransactionRepository transactionRepository = new TransactionRepositoryImp();
+        TransactionService transactionService = new TransactionServiceImp(transactionRepository, feeRuleService, accountRepository);
+        return new TransactionController(transactionService, accountService, clientService);
+    }
+
+    public static FeeRuleController createFeeRuleController(){
+
+            FeeRuleRepository feeRuleRepository = new FeeRuleRepositoryImp();
+            FeeRuleService feeRuleService = new FeeRuleServiceImp(feeRuleRepository);
+
+            return new FeeRuleController(feeRuleService);
+    }
+
 
 
 

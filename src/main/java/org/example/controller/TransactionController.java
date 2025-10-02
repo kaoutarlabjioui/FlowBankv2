@@ -41,14 +41,29 @@ public class TransactionController {
 
         BigDecimal amount = ConsoleUtils.readPositiveBigDecimal("Enter deposit amount: ");
 
-        Transaction transaction = new Transaction();
-        transaction.setType(TransactionType.DEPOSIT);
-        transaction.setMontant(amount);
-        transaction.setCompteDestination(account.getId());
-        transaction.setDevise(account.getDevise());
+        try {
 
-        transactionService.createTransaction(transaction);
-        System.out.println(" Deposit successful. New balance: " + account.getBalance());
+
+
+            Transaction transaction = new Transaction();
+            transaction.setType(TransactionType.DEPOSIT);
+            transaction.setMontant(amount);
+            transaction.setCompteDestination(account.getId());
+            transaction.setDevise(account.getDevise());
+
+            transactionService.createTransaction(transaction);
+
+
+            Account updated = accountService.getAccount(account.getId()).orElse(account);
+            System.out.println(" Deposit successful. " +
+                    "Amount: " + amount +
+                    " | New balance: " + updated.getBalance());
+
+        } catch (Exception e) {
+
+
+            System.out.println(" Deposit failed: " + e.getMessage());
+        }
     }
     public void withdraw() {
         System.out.println("\n=== WITHDRAW ===");
@@ -64,17 +79,33 @@ public class TransactionController {
             System.out.println(" Insufficient balance.");
             return;
         }
+        try {
 
-        Transaction transaction = new Transaction();
-        transaction.setType(TransactionType.WITHDRAW);
-        transaction.setMontant(amount);
-        transaction.setCompteSource(account.getId());
-        transaction.setDevise(account.getDevise());
 
-        transactionService.createTransaction(transaction);
-        System.out.println(" Withdrawal successful. New balance: " + account.getBalance());
+
+            Transaction transaction = new Transaction();
+            transaction.setType(TransactionType.WITHDRAW);
+            transaction.setMontant(amount);
+            transaction.setCompteSource(account.getId());
+            transaction.setDevise(account.getDevise());
+            transaction.setFeeAmount(BigDecimal.ZERO);
+
+            Transaction savedTx = transactionService.createTransaction(transaction);
+
+
+            Account updated = accountService.getAccount(account.getId()).orElse(account);
+            System.out.println(" Withdraw successful. " +
+                    "Amount: " + amount +
+                    " | Fee: " + savedTx.getFeeAmount() +
+                    " | New balance: " + updated.getBalance());
+
+
+        } catch (Exception e) {
+
+
+            System.out.println(" Withdraw failed: " + e.getMessage());
+        }
     }
-
 
 
     public void transfer() {
@@ -87,10 +118,7 @@ public class TransactionController {
         if (source == null) return;
 
         BigDecimal amount = ConsoleUtils.readPositiveBigDecimal("Enter transfer amount: ");
-        if (source.getBalance().compareTo(amount) < 0) {
-            System.out.println(" Insufficient balance.");
-            return;
-        }
+        System.out.println("Source account balance before transfer: " + source.getBalance());
 
         String choice = ConsoleUtils.readString("Transfer to (1) own account / (2) another client / (3) external: ");
 
@@ -100,23 +128,27 @@ public class TransactionController {
         transaction.setCompteSource(source.getId());
         transaction.setDevise(source.getDevise());
 
+        boolean isPending = false;
+        Account destination = null;
+
         switch (choice) {
             case "1" -> {
-                Account destination = selectAccount(client, source);
+                destination = selectAccount(client, source);
                 if (destination == null) return;
                 transaction.setCompteDestination(destination.getId());
             }
             case "2" -> {
                 Client otherClient = selectClient();
                 if (otherClient == null) return;
-                Account destination = selectAccount(otherClient);
+                destination = selectAccount(otherClient);
                 if (destination == null) return;
                 transaction.setCompteDestination(destination.getId());
+                isPending = true;
             }
             case "3" -> {
                 String rib = ConsoleUtils.readString("Enter external RIB: ");
-                transactionService.transferToExternalAccount(source, amount, rib);
-                return;
+                isPending = true;
+                transaction.setDescription("External transfer to " + rib);
             }
             default -> {
                 System.out.println(" Invalid choice.");
@@ -124,10 +156,29 @@ public class TransactionController {
             }
         }
 
-        // Appel au service pour exécuter la transaction
-        transactionService.createTransaction(transaction);
-        System.out.println("✅ Transaction executed successfully!");
+        try {
+             transactionService.createTransaction(transaction);
+
+            if (isPending) {
+                System.out.println("Transaction is PENDING and needs manager approval.");
+            } else {
+
+                Account updatedSource = accountService.getAccount(source.getId()).orElse(source);
+                System.out.println("Transfer executed successfully!");
+                System.out.println("Source account new balance: " + updatedSource.getBalance());
+                if (destination != null) {
+                    Account updatedDest = accountService.getAccount(destination.getId()).orElse(destination);
+                    System.out.println("Destination account new balance: " + updatedDest.getBalance());
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(" Transfer failed: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
+
+
 
 
 
@@ -140,7 +191,7 @@ public class TransactionController {
         String cin = ConsoleUtils.readString("Enter client's CIN: ");
         Client client = clientService.getClientByCin(cin);
         if (client == null) {
-            System.out.println("❌ Client not found.");
+            System.out.println(" Client not found.");
         }
         return client;
     }
@@ -152,7 +203,7 @@ public class TransactionController {
     private Account selectAccount(Client client, Account excludeAccount) {
         List<Account> accounts = accountService.getAccountsByClient(client.getId());
         if (accounts.isEmpty()) {
-            System.out.println("❌ This client has no accounts.");
+            System.out.println("This client has no accounts.");
             return null;
         }
 

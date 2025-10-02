@@ -3,11 +3,13 @@ package org.example.service.implementation;
 import org.example.entities.FeeRule;
 import org.example.entities.enums.TransactionType;
 import org.example.repository.FeeRuleRepository;
+import org.example.service.FeeRuleService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class FeeRuleServiceImp {
+public class FeeRuleServiceImp implements FeeRuleService {
     private FeeRuleRepository feeRuleRepository;
 
     public FeeRuleServiceImp(FeeRuleRepository feeRuleRepository) {
@@ -39,4 +41,11 @@ public class FeeRuleServiceImp {
                 .findFirst();
     }
 
+    public List<FeeRule> getAllFeeRules() {
+        return feeRuleRepository.findAll();
+    }
+
 }
+
+
+
