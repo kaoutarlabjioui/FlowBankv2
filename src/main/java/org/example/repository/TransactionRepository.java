@@ -13,6 +13,7 @@ public interface TransactionRepository {
     void applyTransactionBalances(Transaction transaction);
     Optional<Transaction> findById(UUID id);
     List<Transaction> findByAccountId(UUID accountId);
+    List<Transaction> findByStatus(TransactionStatus status);
     List<Transaction> findAll();
     void updateStatus(UUID transactionId, TransactionStatus status);
 }

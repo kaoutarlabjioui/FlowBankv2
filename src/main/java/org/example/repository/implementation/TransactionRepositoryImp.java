@@ -198,11 +198,27 @@ public class TransactionRepositoryImp implements TransactionRepository {
             e.printStackTrace();
         }
     }
+    @Override
+    public List<Transaction> findByStatus(TransactionStatus status) {
+        List<Transaction> transactions = new ArrayList<>();
+        String sql = "SELECT * FROM transactions WHERE status = ?::transaction_status"; // ✅ bien écrire transactions
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, status.name());
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                transactions.add(mapResultSet(rs)); // tu as déjà ta méthode mapResultSet
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return transactions;
+    }
+
 
     private Transaction mapResultSet(ResultSet rs) throws SQLException {
         Transaction transaction = new Transaction();
         transaction.setId((UUID) rs.getObject("id"));
-        transaction.setType(TransactionType.valueOf(rs.getString("type")));
+        transaction.setType(TransactionType.valueOf(rs.getString("type").toUpperCase()));
         transaction.setMontant(rs.getBigDecimal("montant"));
         transaction.setDevise(Currency.valueOf(rs.getString("devise")));
         transaction.setFeeAmount(rs.getBigDecimal("fee_amount"));

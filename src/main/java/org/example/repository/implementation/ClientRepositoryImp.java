@@ -8,6 +8,8 @@ import org.example.repository.UserRepository;
 import org.example.utils.DatabaseConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class ClientRepositoryImp implements ClientRepository {
@@ -55,6 +57,19 @@ public class ClientRepositoryImp implements ClientRepository {
 
 
     }
+    public List<Client> findAll() {
+        List<Client> clients = new ArrayList<>();
+        String sql = "SELECT * FROM clients";
+        try (Statement stmt = connection.createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                clients.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return clients;
+    }
 
     public Client findByCin( String cin){
         try{
@@ -96,7 +111,23 @@ public class ClientRepositoryImp implements ClientRepository {
         return null;
     }
 
-
+    private Client mapRow(ResultSet rs) throws SQLException {
+        Client client = new Client();
+        client.setId((UUID) rs.getObject("id"));
+        client.setCin(rs.getString("cin"));
+        client.setNom(rs.getString("nom"));
+        client.setPrenom(rs.getString("prenom"));
+        client.setTele(rs.getString("tele"));
+        client.setAdresse(rs.getString("adresse"));
+        client.setDateNaissance(rs.getDate("date_naissance").toLocalDate());
+        client.setSalaire(rs.getBigDecimal("salaire"));
+        client.setCreatedBy((UUID) rs.getObject("created_by"));
+        Timestamp ts = rs.getTimestamp("created_at");
+        if (ts != null) {
+            client.setCreatedAt(ts.toLocalDateTime());
+        }
+        return client;
+    }
 
 
 }

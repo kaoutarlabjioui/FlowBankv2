@@ -33,7 +33,7 @@ public class TransactionServiceImp implements TransactionService {
     @Override
     public Transaction createTransaction(Transaction transaction) {
 
-        // Appliquer la règle de frais
+
         Optional<FeeRule> optionalRule = feeRuleService.findActiveRuleByTransactionType(transaction.getType());
         if (optionalRule.isPresent()) {
             FeeRule rule = optionalRule.get();
@@ -49,7 +49,7 @@ public class TransactionServiceImp implements TransactionService {
             transaction.setFeeRuleId(rule.getId());
         }
 
-        // Validation
+
         switch (transaction.getType()) {
             case DEPOSIT -> validateDeposit(transaction);
             case WITHDRAW -> validateWithdraw(transaction);
@@ -72,7 +72,7 @@ public class TransactionServiceImp implements TransactionService {
 
 
     private void validateDeposit(Transaction transaction) {
-        // Vérifier si le compte destination existe
+
         accountRepository.findById(transaction.getCompteDestination())
                 .orElseThrow(() -> new IllegalStateException("Destination account not found"));
     }
@@ -88,7 +88,7 @@ public class TransactionServiceImp implements TransactionService {
     }
 
     public void transferToExternalAccount(Account source, BigDecimal amount, String rib) {
-        // Vérifier la règle de frais
+
         BigDecimal fee = BigDecimal.ZERO;
         Optional<FeeRule> optionalRule = feeRuleService.findActiveRuleByTransactionType(TransactionType.TRANSFER);
         if (optionalRule.isPresent()) {
@@ -100,13 +100,13 @@ public class TransactionServiceImp implements TransactionService {
             }
         }
 
-        // Vérifier le solde avec frais inclus
+
         BigDecimal totalDebit = amount.add(fee);
         if (source.getBalance().compareTo(totalDebit) < 0) {
             throw new IllegalStateException("Insufficient balance for external transfer (including fees)");
         }
 
-        // Créer la transaction en PENDING
+
         Transaction tx = new Transaction();
         tx.setType(TransactionType.TRANSFER);
         tx.setMontant(amount);
@@ -149,6 +149,10 @@ public class TransactionServiceImp implements TransactionService {
         return transactionRepository.findAll();
     }
 
+    public List<Transaction> getTransactionsByStatus(TransactionStatus status) {
+        return transactionRepository.findByStatus(status);
+    }
+
     public void updateTransactionStatus(UUID transactionId, TransactionStatus status) {
         transactionRepository.updateStatus(transactionId, status);
     }
@@ -156,7 +160,7 @@ public class TransactionServiceImp implements TransactionService {
     public void approveTransaction(Transaction transaction) {
         if (transaction.getStatus() != TransactionStatus.PENDING) return;
 
-        // Appliquer le solde
+
         transactionRepository.applyTransactionBalances(transaction);
         transaction.setStatus(TransactionStatus.SETTLED);
         transactionRepository.updateStatus(transaction.getId(), TransactionStatus.SETTLED);

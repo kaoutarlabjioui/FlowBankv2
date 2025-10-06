@@ -17,6 +17,6 @@ public interface AccountService {
     void freezeAccount(UUID accountId);
 
     void reopenAccount(UUID accountId);
-
+    void updateAccount(Account account);
     Optional<Account> getAccount(UUID accountId);
 }

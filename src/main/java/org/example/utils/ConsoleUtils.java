@@ -61,5 +61,18 @@ public class ConsoleUtils {
         return value;
     }
 
+    public static boolean readBoolean(String prompt) {
+        while (true) {
+            System.out.print(prompt + " [y/n]: ");
+            String input = sc.nextLine().trim().toLowerCase();
+
+            if (input.equals("y") || input.equals("yes")) return true;
+            if (input.equals("n") || input.equals("no")) return false;
+
+            System.out.println("Invalid input. Please enter 'y' or 'n'.");
+        }
+    }
+
+
 
 }

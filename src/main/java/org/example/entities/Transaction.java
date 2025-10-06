@@ -61,4 +61,19 @@ public class Transaction {
     public void setStatus(TransactionStatus status) { this.status = status; }
     public UUID getFeeRuleId() { return feeRuleId; }
     public void setFeeRuleId(UUID feeRuleId) { this.feeRuleId = feeRuleId; }
+
+    @Override
+    public String toString() {
+        return "\n=== Transaction ===" +
+                "\nType        : " + type +
+                "\nDevise      : " + devise +
+                "\nMontant     : " + montant +
+                "\nFrais       : " + feeAmount +
+                "\nDate        : " + dateExecution +
+                "\nSource      : " + compteSource +
+                "\nDestination : " + compteDestination +
+                "\nDescription : " + (description != null ? description : "-") +
+                "\nStatut      : " + status +
+                "\n---------------------------";
+    }
 }

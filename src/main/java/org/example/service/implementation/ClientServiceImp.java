@@ -6,6 +6,7 @@ import org.example.service.ClientService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public class ClientServiceImp implements ClientService {
@@ -34,5 +35,12 @@ private  Client client;
     public Client getClientByCin(String cin){
 
         return clientRepository.findByCin(cin);
+    }
+
+
+
+    @Override
+    public List<Client> getAllClients() {
+        return clientRepository.findAll();
     }
 }

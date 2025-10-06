@@ -19,5 +19,9 @@ public interface TransactionService {
     List<Transaction> getAllTransactions();
 
     void updateTransactionStatus(UUID transactionId, TransactionStatus status);
+
     void transferToExternalAccount(Account source, BigDecimal amount, String rib);
+    void approveTransaction(Transaction transaction);
+    void rejectTransaction(Transaction transaction);
+    List<Transaction> getTransactionsByStatus(TransactionStatus status);
 }

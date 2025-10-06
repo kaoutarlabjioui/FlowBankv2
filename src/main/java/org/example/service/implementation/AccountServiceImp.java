@@ -65,7 +65,9 @@ public class AccountServiceImp implements AccountService {
         return accountRepository.findById(accountId);
     }
 
-
+        public void updateAccount(Account account){
+                accountRepository.update(account);
+        }
 
 
 }

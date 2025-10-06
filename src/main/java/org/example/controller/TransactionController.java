@@ -178,13 +178,20 @@ public class TransactionController {
         }
     }
 
+    public void processPendingTransactions() {
+        List<Transaction> pendingTx = transactionService.getTransactionsByStatus(TransactionStatus.PENDING);
+        if (pendingTx.isEmpty()) {
+            System.out.println("No pending transactions.");
+            return;
+        }
 
-
-
-
-
-
-
+        for (Transaction tx : pendingTx) {
+            System.out.println(tx);
+            boolean approve = ConsoleUtils.readBoolean("Approve this transaction? (true/false): ");
+            if (approve) transactionService.approveTransaction(tx);
+            else transactionService.rejectTransaction(tx);
+        }
+    }
 
 
     private Client selectClient() {

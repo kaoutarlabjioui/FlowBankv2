@@ -67,7 +67,49 @@ public class AppConfig {
             return new FeeRuleController(feeRuleService);
     }
 
+    public static CreditController createCreditController(){
+        RoleRepository roleRepository = new RoleRepositoryImp();
+        UserRepository userRepository = new UserRepositoryImp(roleRepository);
+        ClientRepository clientRepository = new ClientRepositoryImp(userRepository);
+        ClientService clientService = new ClientServiceImp(clientRepository);
+        AccountRepository accountRepository = new AccountRepositoryImp();
+        AccountService accountService = new AccountServiceImp(accountRepository);
+        CreditRepository creditRepository = new CreditRepositoryImp();
+        CreditService creditService = new CreditServiceImp(creditRepository,accountService,clientService);
 
 
+            return new CreditController(creditService,clientService,accountService);
+    }
+
+
+    public static CreditService createCreditService(){
+        RoleRepository roleRepository = new RoleRepositoryImp();
+        UserRepository userRepository = new UserRepositoryImp(roleRepository);
+        ClientRepository clientRepository = new ClientRepositoryImp(userRepository);
+        ClientService clientService = new ClientServiceImp(clientRepository);
+        AccountRepository accountRepository = new AccountRepositoryImp();
+        AccountService accountService = new AccountServiceImp(accountRepository);
+        CreditRepository creditRepository = new CreditRepositoryImp();
+
+            return new CreditServiceImp(creditRepository,accountService,clientService);
+    }
+
+    public static AccountService createAccountService(){
+        RoleRepository roleRepository = new RoleRepositoryImp();
+        UserRepository userRepository = new UserRepositoryImp(roleRepository);
+        AccountRepository accountRepository = new AccountRepositoryImp();
+
+            return new AccountServiceImp(accountRepository);
+    }
+
+    public static ClientService createClientService(){
+
+
+        RoleRepository roleRepository = new RoleRepositoryImp();
+        UserRepository userRepository = new UserRepositoryImp(roleRepository);
+        ClientRepository clientRepository = new ClientRepositoryImp(userRepository);
+
+            return new ClientServiceImp(clientRepository);
+    }
 
 }
